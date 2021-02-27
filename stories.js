@@ -1,18 +1,5 @@
-const requestURL = 'https://raw.githubusercontent.com/yndx-shri/shri-2021-task-1/master/data/data.json';
-
-fetch(requestURL)
-    .then((res) => res.json())
-    .then(templates => {
-        const slideNumber = 0; // TODO: get slide number from url
-        slide = templates[slideNumber];
-
-        renderTemplate(slide.alias, slide.data)
-    })
-
-const body = document.querySelector('body'); //!!!
 function renderTemplate(alias, data) {
     console.log([alias, data]);
-    // TODO: set theme. e.g. <body class="theme_light">
     // TODO: use switch instead of if
     if (alias === 'leaders') {
         renderLeadersTemplate(data)
@@ -112,8 +99,8 @@ function renderLeadersTemplate(data) {
         userBox.appendChild(userBoxRectangle);
         usersRatingBox.appendChild(userBox);
     }
-    body.appendChild(leadersTemplate);
 
+    return leadersTemplate;
 }
 
 function renderVoteTemplate(data) {
@@ -130,4 +117,8 @@ function renderDiagramTemplate(data) {
 
 function renderActivityTemplate(data) {
     
+}
+
+module.exports = {
+    renderTemplate: renderTemplate
 }
