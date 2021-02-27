@@ -1,24 +1,19 @@
-const http = require('http');
-const hostname = '0.0.0.0';
-const port = 8080;
-const server = http.create
-
-
-
 const requestURL = 'https://raw.githubusercontent.com/yndx-shri/shri-2021-task-1/master/data/data.json';
-const request = new XMLHttpRequest();
-request.open('GET', requestURL);
-request.responseType = 'json';
-request.send();
-request.onload = function() {
-    let template = request.response[0];
-    const alias = template.alias;
-    const data = template.data;
-    console.log(renderTemplate(alias, data));
-}
+
+fetch(requestURL)
+    .then((res) => res.json())
+    .then(templates => {
+        const slideNumber = 0; // TODO: get slide number from url
+        slide = templates[slideNumber];
+
+        renderTemplate(slide.alias, slide.data)
+    })
+
 const body = document.querySelector('body'); //!!!
 function renderTemplate(alias, data) {
     console.log([alias, data]);
+    // TODO: set theme. e.g. <body class="theme_light">
+    // TODO: use switch instead of if
     if (alias === 'leaders') {
         renderLeadersTemplate(data)
     }
@@ -36,13 +31,21 @@ function renderTemplate(alias, data) {
     }
 }
 
+// function renderHeader(title, subtitle) {
+//     // TODO: return 
+//     <div class="header">
+//         <h1>{title}</h1>
+//         <h2>{subtitle}</h2>
+//     </div>
+// }
+
 function renderLeadersTemplate(data) {
     //const
     const leadersTemplate = document.createElement('div');
     const leadersTitle = document.createElement('h1');
     const leadersSubtitle = document.createElement('h2');
     const usersRatingBox = document.createElement('div');
-    const titleText = data.title;
+    const titleText = data.title; // TODO: move title and subtitle to common components
     const subtitleText = data.subtitle;
     const leadersUsers = data.users;
     const emoji = data.emoji; //
@@ -69,28 +72,33 @@ function renderLeadersTemplate(data) {
         const userBoxValue = document.createElement('h4');
         const userBoxRectangle = document.createElement('div');
         const userBoxRectanglePlace = document.createElement('h3');
-
+        const isFirst = i === 0;
+        const isLast = i === 4;
         userBoxRectanglePlace.textContent = i+1;
 
         userBoxName.textContent = leadersUsers[i].name;
         userBoxValue.textContent = leadersUsers[i].valueText;
         userBoxImage.src = leadersUsers[i].avatar;
-        userBox.classList.add('leaders__user-box');
-        userBoxRectanglePlace.classList.add('leaders__user-box-place');
-        userBoxRectangle.classList.add('leaders__user-box-rectangle');
-        if(i + 1 === 1) {
+        
+
+        if(isFirst) {
             userBoxRectangle.classList.add('leaders__user-box-rectangle_first');
             const userBoxEmoji = document.createElement('div');
             userBoxEmoji.classList.add('leaders__user-box-info_emoji');
             userBoxEmoji.textContent = emoji;
             userBoxInfo.appendChild(userBoxEmoji);
         }
-        if(i + 1 === 5) {
+
+        if(isLast) {
             const userBoxEmoji = document.createElement('div');
             userBoxEmoji.classList.add('leaders__user-box-info_emoji');
             userBoxEmoji.textContent = lastPlaceEmoji;
             userBoxInfo.appendChild(userBoxEmoji);
         }
+
+        userBox.classList.add('leaders__user-box');
+        userBoxRectanglePlace.classList.add('leaders__user-box-place');
+        userBoxRectangle.classList.add('leaders__user-box-rectangle');
         userBoxInfo.classList.add('leaders__user-box-info');
         userBoxImage.classList.add('leaders__user-box-info_image');
         userBoxName.classList.add('leaders__user-box-info_name');

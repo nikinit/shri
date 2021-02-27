@@ -1,18 +1,18 @@
 @font-face {
     font-family: 'Roboto';
-    src: url("./fonts/Roboto-Regular.ttf");
+    src: url("./assets/fonts/Roboto-Regular.ttf");
     font-style: normal;
     font-weight: 400;
 }
 @font-face {
     font-family: 'Roboto';
-    src: url("./fonts/Roboto-Medium.ttf");
+    src: url("./assets/fonts/Roboto-Medium.ttf");
     font-style: normal;
     font-weight: medium;
 }
 @font-face {
     font-family: 'Roboto';
-    src: url("./fonts/Roboto-Bold.ttf");
+    src: url("./assets/fonts/Roboto-Bold.ttf");
     font-style: normal;
     font-weight: 900;
 }
@@ -22,9 +22,10 @@ body {
 }
 .root {
     height: 100vh;
-    background: radial-gradient(circle at 50% 50%, #130E00 0%, #000000 100%);
+    background: radial-gradient(70.24% 70.24% at 49.87% 29.76%, rgba(19, 14, 0, 0.9) 0%, #000000 100%);
     position: relative;
 }
+
 .leaders__title {
     font-style: normal;
     font-weight: bold;
@@ -60,6 +61,7 @@ body {
     justify-content: flex-end;
     align-items: center;
     width: calc(120vw / 668 * 100);
+    position: relative;
 }
 .leaders__user-box:nth-child(1) {
     order: 3;
@@ -67,28 +69,24 @@ body {
 }
 .leaders__user-box:nth-child(2) {
     order: 4;
-    position: relative;
     right: 16px;
     z-index: 2;
     top: calc(20vh / 376 * 100);
 }
 .leaders__user-box:nth-child(3) {
     order: 2;
-    position: relative;
     left: 16px;
     z-index: 2;
     top: calc(20vh / 376 * 100);
 }
 .leaders__user-box:nth-child(4) {
     order: 5;
-    position: relative;
     right: 32px;
     z-index: 1;
     top: calc(40vh / 376 * 100);
 }
 .leaders__user-box:nth-child(5) {
     order: 1;
-    position: relative;
     left: 32px;
     z-index: 1;
     top: calc(40vh / 376 * 100);
@@ -100,12 +98,14 @@ body {
     align-items: center;
 }
 .leaders__user-box-info_emoji {
-    width: 32px;
-    height: 32px;
+    font-size: 32px;
+    display: contents;
 }
 .leaders__user-box-info_image {
+    /* fix */
     width: calc(64vw / 668 * 100);
     height: calc(64vh / 376 * 100);
+    /* fix */
     display: block;
     margin: 0 auto;
     border-radius: 32px;
