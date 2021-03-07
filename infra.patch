@@ -1,0 +1,842 @@
+diff --git a/.gitignore b/.gitignore
+index 40b878d..b51ea71 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,2 @@
+-node_modules/
+\ No newline at end of file
++node_modules/
++build/
+\ No newline at end of file
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..9aac12a
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,19 @@
++# Сайт для первого задания ШРИ 2021
++
++## Структура
++`/server` - папка с node сервером, отдающим шаблоны с версткой
++`/frontend` - папка с файлами для работы в браузере
++`/data` - данные для отображения шаблонов
++`/assets` - картинки и шрифты
++
++## Использованные библиотеки
++
++### Сборка
++- webpack - для сборки кода. Систему сборки использую, чтобы не складывать изначально все файлы в один и иметь возможность писать код более организованно.
++- css-loader - плагин вебпака для загрузки css, используется в связке с mini-css-extract-loader
++- mini-css-extract-plugin - сборка всех css файлов в один
++- copy-webpack-plugin - для копирования картинок из директории `assets/` в `build/`
++- file-loader - для загрузки шрифтов в `build/` директорию
++
++### Разработка
++- nodemon - автоматическая перезагрузка сервера при внесении изменений
+diff --git a/app.js b/app.js
+deleted file mode 100644
+index 9811e73..0000000
+--- a/app.js
++++ /dev/null
+@@ -1,21 +0,0 @@
+-const express = require('express')
+-const { renderTemplate } = require('./stories')
+-const data = require('./data/data.json')
+-const app = express()
+-const port = 8081
+-
+-app.get('/', (req, res) => {
+-    const theme = req.query.theme;
+-    module.exports.theme =  theme;
+-    const slideNumber = req.query.slide - 1;
+-    const slide = data[slideNumber];
+-    const alias = slide.alias;
+-    const info = slide.data;
+-    const template = renderTemplate(alias, info);
+-    res.send(template);
+-    // console.log('received request');
+-})
+-app.use(express.static('assets'));
+-app.listen(port, () => {
+-  console.log(`Example app listening at http://localhost:${port}`)
+-})
+\ No newline at end of file
+diff --git a/frontend/index.css b/frontend/index.css
+new file mode 100644
+index 0000000..2679ef5
+--- /dev/null
++++ b/frontend/index.css
+@@ -0,0 +1,38 @@
++@font-face {
++    font-family: 'Roboto';
++    src: url("../assets/fonts/Roboto-Regular.ttf");
++    font-style: normal;
++    font-weight: 400;
++}
++@font-face {
++    font-family: 'Roboto';
++    src: url("../assets/fonts/Roboto-Medium.ttf");
++    font-style: normal;
++    font-weight: medium;
++}
++@font-face {
++    font-family: 'Roboto';
++    src: url("../assets/fonts/Roboto-Bold.ttf");
++    font-style: normal;
++    font-weight: 900;
++}
++
++body {
++    font-family: 'Roboto';
++}
++
++body > section {
++    height: 100vh;
++    width: 100vw;
++    position: relative;
++    display: flex;
++    flex-direction: column;
++}
++
++.theme_light {
++    background: #FFFFFF;
++}
++
++.theme_dark {
++    background: radial-gradient(70.24% 70.24% at 49.87% 29.76%, rgba(19, 14, 0, 0.9) 0%, #000000 100%);
++}
+diff --git a/assets/normalize.css b/frontend/normalize.css
+similarity index 100%
+rename from assets/normalize.css
+rename to frontend/normalize.css
+diff --git a/frontend/stories.js b/frontend/stories.js
+new file mode 100644
+index 0000000..b47299f
+--- /dev/null
++++ b/frontend/stories.js
+@@ -0,0 +1,21 @@
++import './index.css';
++import './normalize.css';
++import { renderLeadersTemplate } from './templates/leaders/leaders';
++import { renderDiagramTemplate } from './templates/diagram/diagram';
++
++function renderTemplate(alias, data) {
++    switch(alias) {
++        case 'leaders':
++            return renderLeadersTemplate(data);
++        case 'vote':
++            return renderVoteTemplate(data);
++        case 'chart':
++            return renderChartTemplate(data);
++        case 'diagram':
++            return renderDiagramTemplate(data);
++        case 'activity':
++            return renderActivityTemplate(data);
++    }
++}
++
++window.renderTemplate = renderTemplate;
+diff --git a/assets/indexDiagram.css b/frontend/templates/diagram/diagram.css
+similarity index 84%
+rename from assets/indexDiagram.css
+rename to frontend/templates/diagram/diagram.css
+index ddc446a..d286b92 100644
+--- a/assets/indexDiagram.css
++++ b/frontend/templates/diagram/diagram.css
+@@ -1,34 +1,3 @@
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Regular.ttf");
+-    font-style: normal;
+-    font-weight: 400;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Medium.ttf");
+-    font-style: normal;
+-    font-weight: medium;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Bold.ttf");
+-    font-style: normal;
+-    font-weight: 900;
+-}
+-
+-body {
+-    font-family: 'Roboto';
+-}
+-.root {
+-    height: 100vh;
+-    width: 100vw;
+-    background: radial-gradient(70.24% 70.24% at 49.87% 29.76%, rgba(19, 14, 0, 0.9) 0%, #000000 100%);
+-    position: relative;
+-    display: flex;
+-    flex-direction: column;
+-}
+-
+ .diagram__title {
+     font-weight: bold;
+     font-size: 30px;
+diff --git a/templates/diagram/diagram.js b/frontend/templates/diagram/diagram.js
+similarity index 69%
+rename from templates/diagram/diagram.js
+rename to frontend/templates/diagram/diagram.js
+index a939009..a5be156 100644
+--- a/templates/diagram/diagram.js
++++ b/frontend/templates/diagram/diagram.js
+@@ -1,11 +1,9 @@
+-function renderDiagramTemplate(data, theme) {
++// require('./diagram.css');
++
++export function renderDiagramTemplate(data, theme) {
+     const title = data.title;
+     const subtitle = data.subtitle;
+     const totalText = data.totalText;
+     const differenceText = data.differenceText;
+     const categories = data.categories;
+ }
+-
+-
+-
+-module.exports = renderDiagramTemplate;
+\ No newline at end of file
+diff --git a/assets/indexLeaders.css b/frontend/templates/leaders/leaders.css
+similarity index 79%
+rename from assets/indexLeaders.css
+rename to frontend/templates/leaders/leaders.css
+index 82a0e09..ad19cfc 100644
+--- a/assets/indexLeaders.css
++++ b/frontend/templates/leaders/leaders.css
+@@ -1,34 +1,3 @@
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Regular.ttf");
+-    font-style: normal;
+-    font-weight: 400;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Medium.ttf");
+-    font-style: normal;
+-    font-weight: medium;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./fonts/Roboto-Bold.ttf");
+-    font-style: normal;
+-    font-weight: 900;
+-}
+-
+-body {
+-    font-family: 'Roboto';
+-}
+-.root {
+-    height: 100vh;
+-    width: 100vw;
+-    background: radial-gradient(70.24% 70.24% at 49.87% 29.76%, rgba(19, 14, 0, 0.9) 0%, #000000 100%);
+-    position: relative;
+-    display: flex;
+-    flex-direction: column;
+-}
+-
+ .leaders__title {
+     font-weight: bold;
+     font-size: 30px;
+@@ -150,49 +119,45 @@ body {
+     margin-top: 18px;
+ }
+ 
+-/* light theme down */
+-
+-.root_light {
+-    background: #FFFFFF;
+-}
++/* light theme */
+ 
+-.leaders__title_light {
++.theme_light .leaders__title {
+     color: #261C00;
+ }
+ 
+-.leaders__subtitle_light {
++.theme_light .leaders__subtitle {
+     color: #BFBFBF;
+ }
+ 
+-.leaders__user-box-info_image_light {
++.theme_light .leaders__user-box-info_image {
+     -webkit-filter: grayscale(0);
+     filter: grayscale(0);
+ }
+ 
+-.leaders__user-box-info_name_light {
++.theme_light .leaders__user-box-info_name {
+     color: #261C00;
+ }
+ 
+-.leaders__user-box-info_value_light {
++.theme_light .leaders__user-box-info_value {
+     color: #BFBFBF;
+ }
+ 
+-.leaders__user-box-place_light {
++.theme_light .leaders__user-box-place {
+     color: #261C00;
+ }
+ 
+-.leaders__user-box-rectangle_light {
++.theme_light .leaders__user-box-rectangle {
+     background: linear-gradient(180deg, rgba(244, 244, 244, 0.9) 0.82%, #E9E9E9 100%, rgba(234, 234, 234, 0) 100%);
+     box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(207, 207, 207, 0.5);
+ }
+ 
+-.leaders__user-box-rectangle_first_light {
++.theme_light .leaders__user-box-rectangle_first {
+     background: linear-gradient(180deg, #FFF2D1 0.82%, #FFD66C 100%);
+     box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(255, 176, 57, 0.8);
+ }
+ 
+ 
+-/* light theme up */
++/* light theme end */
+ 
+ /* adaptive here */
+ 
+diff --git a/frontend/templates/leaders/leaders.js b/frontend/templates/leaders/leaders.js
+new file mode 100644
+index 0000000..446b3ee
+--- /dev/null
++++ b/frontend/templates/leaders/leaders.js
+@@ -0,0 +1,77 @@
++import './leaders.css';
++
++const classes = {
++    'root' : 'leaders',
++    'title' : 'leaders__title',
++    'subtitle' : 'leaders__subtitle',
++    'usersBox' : 'leaders__users-box',
++    'userBox' : 'leaders__user-box',
++    'info' : 'leaders__user-box-info',
++    'emoji' : 'leaders__user-box-info_emoji',
++    'image' : 'leaders__user-box-info_image',
++    'name' : 'leaders__user-box-info_name',
++    'value' : 'leaders__user-box-info_value',
++    'rectangle' : 'leaders__user-box-rectangle',
++    'rectangleFirst' : 'leaders__user-box-rectangle_first',
++    'place' : 'leaders__user-box-place'
++};
++
++export function renderLeadersTemplate(data) {
++    const title = data.title;
++    const subtitle = data.subtitle;
++    const users = data.users;
++    const winnerEmoji = data.emoji;
++    const lastPlaceEmoji = '👍';
++    const isFirst = 0;
++    const isLast = 4;
++    let userBoxes = [];
++    for(let i = 0; i < users.length; i++) {
++        if(i === isFirst) {
++            userBoxes.push(createUserBox(users[i], i, winnerEmoji));
++        }
++        else if(i === isLast) {
++            userBoxes.push(createUserBox(users[i], i, lastPlaceEmoji));
++        }
++        else {
++            userBoxes.push(createUserBox(users[i], i));
++        }
++    }
++    
++    const template = `
++        <section class='${classes.root}'>
++            <h1 class='${classes.title}'>${title} </h1>
++            <h2 class='${classes.subtitle}'>${subtitle}</h2>
++            <div class='${classes.usersBox}'>
++                ${userBoxes[0]}
++                ${userBoxes[1]}
++                ${userBoxes[2]}
++                ${userBoxes[3]}
++                ${userBoxes[4]}
++            </div>
++        </section>
++    `;
++
++    return template;
++}
++
++function createUserBox(userData, userPlace, emoji = '') {
++    const userName = userData.name;
++    const userAvatar = userData.avatar;
++    const userValue = userData.valueText;
++    const imagePath = `./images/4x/${userAvatar}`;
++    const userBox = `
++        <div class='${classes.userBox}'>
++            <div class='${classes.info}'>
++                <div class='${classes.emoji}'>${emoji}</div>
++                <img class='${classes.image}' src='${imagePath}' alt='user avatar'>
++                <h3 class='${classes.name}'>${userName}</h3>
++                <h4 class='${classes.value}'>${userValue}</h4>
++            </div>
++            <div class='${classes.rectangle} ${userPlace === 0 ? classes.rectangleFirst : ''}'>
++                <h5 class='${classes.place}'>${userPlace + 1}</h5>
++            </div>
++        </div>
++    `;
++
++    return userBox;
++}
+diff --git a/frontend/webpack.config.dev.js b/frontend/webpack.config.dev.js
+new file mode 100644
+index 0000000..735259c
+--- /dev/null
++++ b/frontend/webpack.config.dev.js
+@@ -0,0 +1,9 @@
++const path = require('path');
++const base = require('./webpack.config')
++
++module.exports = {
++  ...base,
++  optimization: {
++		minimize: false
++	}
++};
+diff --git a/frontend/webpack.config.js b/frontend/webpack.config.js
+new file mode 100644
+index 0000000..e71a39b
+--- /dev/null
++++ b/frontend/webpack.config.js
+@@ -0,0 +1,35 @@
++const path = require('path');
++const MiniCssExtractPlugin = require('mini-css-extract-plugin');
++const CopyPlugin = require("copy-webpack-plugin"); 
++
++module.exports = {
++  mode: 'production',
++  entry: './frontend/stories.js',
++  plugins: [
++    new MiniCssExtractPlugin({filename: 'stories.css'}),
++    new CopyPlugin({
++      patterns: [
++        { from: "./assets/images", to: "./images" },
++      ],
++    }),
++  ],
++  output: {
++    path: path.resolve(__dirname, '../build'),
++    filename: 'stories.js',
++  },
++  module: {
++    rules: [
++      {
++        test: /\.css$/i,
++        use: [MiniCssExtractPlugin.loader, 'css-loader'],
++      },
++      {
++        test: /\.(woff|woff2|ttf|otf)$/,
++        loader: 'file-loader',
++        options: {
++          name: 'fonts/[name].[ext]',
++        }
++      },
++    ],
++  },
++};
+diff --git a/index.html b/index.html
+deleted file mode 100644
+index 7cfcd4a..0000000
+--- a/index.html
++++ /dev/null
+@@ -1,13 +0,0 @@
+-<!DOCTYPE html>
+-<html lang="ru">
+-<head>
+-  <meta charset="UTF-8">
+-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+-  <title>stories</title>
+-  <link rel="stylesheet" href="stories.css">
+-  <link rel="stylesheet" href="normalize.css">
+-</head>
+-<body>
+-</body>
+-</html>
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index d312785..e812fc4 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,9 @@
+   "description": "",
+   "main": "stories.js",
+   "scripts": {
+-    "start": "node app.js",
+-    "watch": "nodemon app.js"
++    "start": "rm -rf ./build && webpack --config ./frontend/webpack.config.js && node server/app.js",
++    "watch:server": "nodemon server/app.js",
++    "watch:frontend": "webpack watch --config ./frontend/webpack.config.dev.js"
+   },
+   "author": "",
+   "license": "ISC",
+@@ -13,6 +14,12 @@
+     "express": "^4.17.1"
+   },
+   "devDependencies": {
+-    "nodemon": "^2.0.7"
++    "file-loader": "^6.2.0",
++    "mini-css-extract-plugin": "^1.3.9",
++    "nodemon": "^2.0.7",
++    "webpack": "^5.24.3",
++    "webpack-cli": "^4.5.0",
++    "copy-webpack-plugin": "^8.0.0",
++    "css-loader": "^5.1.1"
+   }
+ }
+diff --git a/server/app.js b/server/app.js
+new file mode 100644
+index 0000000..11db671
+--- /dev/null
++++ b/server/app.js
+@@ -0,0 +1,40 @@
++const express = require('express');
++const data = require('../data/data.json');
++const app = express();
++const port = 8080;
++const themes = ['light', 'dark'];
++
++const renderWrappedPage = (theme, alias, data) => {
++  return `
++  <html>
++    <head>
++        <link rel="stylesheet" href="stories.css">
++    </head>
++    <body> 
++        <body class="theme_${theme}">
++            <script type="text/javascript" src="stories.js"></script>
++            <script>
++                const body = document.querySelector('body');
++                body.innerHTML = window.renderTemplate('${alias}', ${JSON.stringify(data)})
++            </script>
++        </body>
++    </body>
++  </html>
++  `;
++}
++
++const getPage = (req) => {
++  const theme = themes.includes(req.query.theme) ? req.query.theme : 'light';
++  const slide = data[(req.query.slide || 1) - 1];
++
++  return renderWrappedPage(theme, slide.alias, slide.data);
++}
++
++app.get('/', (req, res) => {
++  res.send(getPage(req));
++})
++
++app.use(express.static('build'));
++app.listen(port, () => {
++  console.log(`Server is listening at http://localhost:${port}`)
++})
+\ No newline at end of file
+diff --git a/stories.css b/stories.css
+deleted file mode 100644
+index 7074684..0000000
+--- a/stories.css
++++ /dev/null
+@@ -1,151 +0,0 @@
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./assets/fonts/Roboto-Regular.ttf");
+-    font-style: normal;
+-    font-weight: 400;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./assets/fonts/Roboto-Medium.ttf");
+-    font-style: normal;
+-    font-weight: medium;
+-}
+-@font-face {
+-    font-family: 'Roboto';
+-    src: url("./assets/fonts/Roboto-Bold.ttf");
+-    font-style: normal;
+-    font-weight: 900;
+-}
+-body {
+-    font-family: 'Roboto';
+-    height: 100vh;
+-}
+-.root {
+-    height: 100vh;
+-    background: radial-gradient(70.24% 70.24% at 49.87% 29.76%, rgba(19, 14, 0, 0.9) 0%, #000000 100%);
+-    position: relative;
+-}
+-
+-.leaders__title {
+-    font-style: normal;
+-    font-weight: bold;
+-    font-size: 30px;
+-    line-height: 32px;
+-    text-align: center;
+-    color: #FCFBF7;
+-    margin: 0;
+-    padding: 20px 0 0 0;
+-}
+-.leaders__subtitle {
+-    font-style: normal;
+-    font-weight: 500;
+-    font-size: 16px;
+-    line-height: 18px;
+-    text-align: center;
+-    color: #918F8A;
+-    margin: 8px 0 0 0;
+-}
+-.leaders__users-box {
+-    margin: 28px auto 0 auto;
+-    display: flex;
+-    justify-content: center;
+-    align-items: flex-end;
+-    width: 100vw;
+-    position: fixed;
+-    bottom: 0;
+-}
+-.leaders__user-box {
+-    text-align: center;
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: flex-end;
+-    align-items: center;
+-    width: calc(120vw / 668 * 100);
+-    position: relative;
+-}
+-.leaders__user-box:nth-child(1) {
+-    order: 3;
+-    z-index: 3;
+-}
+-.leaders__user-box:nth-child(2) {
+-    order: 4;
+-    right: 16px;
+-    z-index: 2;
+-    top: calc(20vh / 376 * 100);
+-}
+-.leaders__user-box:nth-child(3) {
+-    order: 2;
+-    left: 16px;
+-    z-index: 2;
+-    top: calc(20vh / 376 * 100);
+-}
+-.leaders__user-box:nth-child(4) {
+-    order: 5;
+-    right: 32px;
+-    z-index: 1;
+-    top: calc(40vh / 376 * 100);
+-}
+-.leaders__user-box:nth-child(5) {
+-    order: 1;
+-    left: 32px;
+-    z-index: 1;
+-    top: calc(40vh / 376 * 100);
+-}
+-.leaders__user-box-info {
+-    display: flex;
+-    flex-direction: column;
+-    justify-content: center;
+-    align-items: center;
+-}
+-.leaders__user-box-info_emoji {
+-    font-size: 32px;
+-    display: contents;
+-}
+-.leaders__user-box-info_image {
+-    /* fix */
+-    width: calc(64vw / 668 * 100);
+-    height: calc(64vh / 376 * 100);
+-    /* fix */
+-    display: block;
+-    margin: 0 auto;
+-    border-radius: 32px;
+-}
+-.leaders__user-box-info_name {
+-    font-weight: 500;
+-    font-size: 16px;
+-    line-height: 18px;
+-    color: #FCFBF7;
+-    margin: 6px 0 0 0;
+-    max-width: 120px;
+-}
+-.leaders__user-box-info_value {
+-    font-style: normal;
+-    font-weight: normal;
+-    font-size: 14px;
+-    line-height: 16px;
+-    color: #BFBFBF;
+-    margin: 4px 0 0 0;
+-}
+-.leaders__user-box-rectangle {
+-    width: calc(120vw / 668 * 100);
+-    height: calc(108vh / 376 * 100);
+-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) -2.22%, rgba(0, 0, 0, 0.8) 100%), radial-gradient(149.08% 95.38% at 38.75% 71.48%, #000000 0%, #231900 0.01%, #4D4D4D 100%);
+-    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.2), inset 2px 2px 16px rgba(103, 103, 103, 0.6);
+-    border-radius: 6px 6px 0 0;
+-    margin-top: 16px;
+-}
+-
+-.leaders__user-box-rectangle_first {
+-    background: radial-gradient(91.67% 122.17% at 69.17% -11.17%, #FFA300 0%, #2D1C00 100%);
+-    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.4), inset 0px 6px 15px rgba(255, 162, 0, 0.4);
+-}
+-.leaders__user-box-place {
+-    font-style: normal;
+-    font-weight: bold;
+-    font-size: 30px;
+-    line-height: 32px;
+-    text-align: center;
+-    color: #FCFBF7;
+-    margin: 0;
+-    padding-top: 18px;
+-}
+\ No newline at end of file
+diff --git a/stories.js b/stories.js
+deleted file mode 100644
+index 0be81ef..0000000
+--- a/stories.js
++++ /dev/null
+@@ -1,21 +0,0 @@
+-const theme = require('./app');
+-const renderLeadersTemplate = require('./templates/leaders/leaders');
+-const renderDiagramTemplate = require('./templates/diagram/diagram');
+-function renderTemplate(alias, data) {
+-    switch(alias) {
+-        case 'leaders':
+-            return renderLeadersTemplate(data, theme.theme);
+-        case 'vote':
+-            return renderVoteTemplate(data, theme.theme);
+-        case 'chart':
+-            return renderChartTemplate(data, theme.theme);
+-        case 'diagram':
+-            return renderDiagramTemplate(data, theme.theme);
+-        case 'activity':
+-            return renderActivityTemplate(data, theme.theme);
+-    }
+-}
+-
+-module.exports = {
+-    renderTemplate: renderTemplate
+-}
+\ No newline at end of file
+diff --git a/templates/leaders/leaders.js b/templates/leaders/leaders.js
+deleted file mode 100644
+index 4c9f49e..0000000
+--- a/templates/leaders/leaders.js
++++ /dev/null
+@@ -1,109 +0,0 @@
+-const classes = {
+-    'root' : 'root',
+-    'title' : 'leaders__title',
+-    'subtitle' : 'leaders__subtitle',
+-    'usersBox' : 'leaders__users-box',
+-    'userBox' : 'leaders__user-box',
+-    'info' : 'leaders__user-box-info',
+-    'emoji' : 'leaders__user-box-info_emoji',
+-    'image' : 'leaders__user-box-info_image',
+-    'name' : 'leaders__user-box-info_name',
+-    'value' : 'leaders__user-box-info_value',
+-    'rectangle' : 'leaders__user-box-rectangle',
+-    'rectangleFirst' : 'leaders__user-box-rectangle_first',
+-    'place' : 'leaders__user-box-place'
+-};
+-const classesLight = {
+-    'root' : 'root_light',
+-    'title' : 'leaders__title_light',
+-    'subtitle' : 'leaders__subtitle_light',
+-    'usersBox' : 'leaders__users-box_light',
+-    'userBox' : 'leaders__user-box_light',
+-    'info' : 'leaders__user-box-info_light',
+-    'emoji' : 'leaders__user-box-info_emoji_light',
+-    'image' : 'leaders__user-box-info_image_light',
+-    'name' : 'leaders__user-box-info_name_light',
+-    'value' : 'leaders__user-box-info_value_light',
+-    'rectangle' : 'leaders__user-box-rectangle_light',
+-    'rectangleFirst' : 'leaders__user-box-rectangle_first_light',
+-    'place' : 'leaders__user-box-place_light'
+-};
+-
+-function renderLeadersTemplate(data, theme) {
+-    const title = data.title;
+-    const subtitle = data.subtitle;
+-    const users = data.users;
+-    const winnerEmoji = data.emoji;
+-    const lastPlaceEmoji = '👍';
+-    const isFirst = 0;
+-    const isLast = 4;
+-    let userBoxes = [];
+-    for(let i = 0; i < users.length; i++) {
+-        if(i === isFirst) {
+-            userBoxes.push(createUserBox(users[i], i, theme, winnerEmoji));
+-        }
+-        else if(i === isLast) {
+-            userBoxes.push(createUserBox(users[i], i, theme, lastPlaceEmoji));
+-        }
+-        else {
+-            userBoxes.push(createUserBox(users[i], i, theme));
+-        }
+-    }
+-    
+-    const template = `
+-    <!DOCTYPE html>
+-    <html lang="ru">
+-    <head>
+-        <meta charset="UTF-8">
+-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+-        <title>stories</title>
+-        <link rel="stylesheet" href="./normalize.css">
+-        <link rel="stylesheet" href="./indexLeaders.css">
+-    </head>
+-    <body>
+-        <div class='${classes.root} ${theme === 'light' ? classesLight.root : ''}'>
+-            <h1 class='${classes.title} ${theme === 'light' ? classesLight.title : ''}'>${title} </h1>
+-            <h2 class='${classes.subtitle} ${theme === 'light' ? classesLight.subtitle : ''}'>${subtitle}</h2>
+-            <div class='${classes.usersBox} ${theme === 'light' ? classesLight.usersBox : ''}'> <!-- rating box! -->
+-                ${userBoxes[0]}
+-                ${userBoxes[1]}
+-                ${userBoxes[2]}
+-                ${userBoxes[3]}
+-                ${userBoxes[4]}
+-            </div>
+-        </div>
+-    </body>
+-    </html>
+-    `;
+-
+-    return template;
+-}
+-
+-function createUserBox(userData, userPlace, theme, emoji = '') {
+-    const userName = userData.name;
+-    const userAvatar = userData.avatar;
+-    const userValue = userData.valueText;
+-    const imagePath = `./images/4x/${userAvatar}`;
+-    const userBox = `
+-        <div class='${classes.userBox} ${theme === 'light' ? classesLight.userBox : ''}'>
+-
+-            <div class='${classes.info} ${theme === 'light' ? classesLight.info : ''}'>
+-
+-                <div class='${classes.emoji} ${theme === 'light' ? classesLight.emoji : ''}'>${emoji}</div>
+-                <img class='${classes.image} ${theme === 'light' ? classesLight.image : ''}' src='${imagePath}' alt='user avatar'>
+-                <h3 class='${classes.name} ${theme === 'light' ? classesLight.name : ''}'>${userName}</h3>
+-                <h4 class='${classes.value} ${theme === 'light' ? classesLight.value : ''}'>${userValue}</h4>
+-            
+-                </div>
+-            
+-            <div class='${classes.rectangle} ${theme === 'light' ? classesLight.rectangle : ''} ${userPlace === 0 ? classes.rectangleFirst : ''} ${(userPlace === 0 && theme === 'light') ? classesLight.rectangleFirst : ''}'>
+-                <h5 class='${classes.place} ${theme === 'light' ? classesLight.place : ''}'>${userPlace + 1}</h5>
+-            </div>
+-        </div>
+-    `;
+-
+-    return userBox;
+-}
+-
+-module.exports = renderLeadersTemplate;
