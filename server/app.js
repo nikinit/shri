@@ -1,7 +1,7 @@
 const express = require('express');
 const data = require('../data/data.json');
 const app = express();
-const port = 8080;
+const port = 8081;
 const themes = ['light', 'dark'];
 
 const renderWrappedPage = (theme, alias, data) => {

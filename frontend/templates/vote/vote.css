@@ -1,0 +1,210 @@
+.vote {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.vote__title {
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+    color: #FCFBF7;
+    margin: 20px 0 0 0;
+}
+.vote__subtitle {
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
+    color: #918F8A;
+    margin: 8px 0 0 0;
+}
+.vote__people {
+    flex-grow: 1;
+    margin: 5px 32px 5px 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.vote__people_vertical {
+    display: none;
+}
+.vote__people-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.vote__people-buttons {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.vote__people-buttons-button {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: contents;
+}
+.vote__people-buttons-button[disabled]:hover {
+    cursor: default;
+}
+.vote__people-buttons-button:hover {
+    cursor: pointer;
+}
+.vote__people-buttons-button_up {
+    transform: rotate(180deg);
+}
+
+.vote__people-user:last-child {
+    margin-top: 4px;
+}
+.vote__people-user:nth-child(1) {
+    margin-top: 0;
+}
+.vote__people-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 104px;
+    height: calc(142vh / 376 * 100);
+    border-radius: 6px;
+    max-height: 142px;
+}
+.vote__people-user:hover {
+    background: radial-gradient(85.62% 148.33% at 49.85% 100%, rgba(68, 58, 42, 0.7864) 0%, rgba(0, 0, 0, 0.8) 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.2), inset 2px 2px 16px rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+.vote__people-user_selected {
+    background: radial-gradient(91.67% 122.17% at 69.17% -11.17%, #FFA300 0%, #2D1C00 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.4), inset 0px 6px 15px rgba(255, 162, 0, 0.4);
+    position: relative;
+}
+.vote__people-user_selected:hover {
+    background: radial-gradient(91.67% 122.17% at 69.17% -11.17%, #FFA300 0%, #2D1C00 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.4), inset 0px 6px 15px rgba(255, 162, 0, 0.4);
+}
+.vote__people-user-emoji {
+    position: absolute;
+    top: -10px;
+    font-size: 32px;
+    z-index: 1;
+}
+.vote__people-user-avatar {
+    width: 64px;
+    height: 64px;
+    filter: grayscale(100%);
+    border-radius: 50%;
+}
+.vote__people-user-name {
+    width: 96px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #FCFBF7;
+    margin: 6px 0 0 0;
+    text-align: center;
+}
+.vote__people-buttons-button-src {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+.vote__people-buttons-button-src_up {
+    transform: rotate(180deg);
+}
+
+/* light theme */
+
+.theme_light .vote__title {
+    color: #261C00;
+}
+.theme_light .vote__subtitle {
+    color: #BFBFBF;
+}
+.theme_light .vote__people-user-avatar {
+    -webkit-filter: grayscale(0);
+    filter: grayscale(0);
+}
+.theme_light .vote__people-user_selected {
+    background: linear-gradient(180deg, #FFF2D1 0.82%, #FFD66C 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(255, 176, 57, 0.8);
+}
+
+.theme_light .vote__people-user:hover {
+    background: linear-gradient(180deg, rgba(244, 244, 244, 0.9) 0.82%, #E9E9E9 100%, rgba(234, 234, 234, 0) 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(207, 207, 207, 0.5);
+}
+.theme_light .vote__people-user_selected:hover {
+    background: linear-gradient(180deg, #FFF2D1 0.82%, #FFD66C 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(255, 176, 57, 0.8);
+}
+.theme_light .vote__people-user-name {
+    color: #261C00;
+}
+
+/* light theme end */
+
+@media screen and (max-height: 340px) {
+    .vote__people-user {
+        height: calc(120vh / 340 * 100);
+    }
+}
+@media screen and (max-height: 310px) {
+    .vote__people-user-avatar {
+        width: 48px;
+        height: 48px;
+    }
+    .vote__people-buttons-button-src {
+        width: 48px;
+        height: 48px;
+    }
+    .vote__people-buttons-button {
+        width: 48px;
+        height: 48px;
+    }
+}
+@media screen and (orientation:portrait) {
+    .vote__people_vertical {
+        display: flex;
+    }
+    .vote__people_horizontal {
+        display: none;
+    }
+    @media screen and (max-height: 590px) {
+        .vote__people-user-avatar {
+            width: 48px;
+            height: 48px;
+        }
+        .vote__people-buttons-button-src {
+            width: 48px;
+            height: 48px;
+        }
+        .vote__people-buttons-button {
+            width: 48px;
+            height: 48px;
+        }
+        .vote__people-user {
+            height: 120px;
+        }
+    }
+    @media  screen and (max-width: 560px) {
+        .vote__title {
+            text-align: left;
+            margin-left: 24px;
+        }
+        .vote__subtitle {
+            align-self: flex-start;
+            margin-left: 24px;
+        }
+    }
+}

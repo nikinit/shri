@@ -2,6 +2,8 @@ import './index.css';
 import './normalize.css';
 import { renderLeadersTemplate } from './templates/leaders/leaders';
 import { renderDiagramTemplate } from './templates/diagram/diagram';
+import { renderChartTemplate } from './templates/chart/chart';
+import { renderVoteTemplate } from './templates/vote/vote';
 
 function renderTemplate(alias, data) {
     switch(alias) {
