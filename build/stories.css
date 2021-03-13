@@ -583,6 +583,15 @@ template {
         max-width: 120px;
     }
 }
+.diagram {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 .diagram__title {
     font-weight: bold;
     font-size: 30px;

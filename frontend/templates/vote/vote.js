@@ -35,7 +35,7 @@ export function renderVoteTemplate(data) {
     const usersLimitVertical = users.length - 8;
     const userBoxes = [];
     let buttons = {}
-    let order = 6; // default order is 0
+    let order = 0; // default order is 0
     for (let i = 0; i < users.length; i++) {
         userBoxes.push(createUserBox(selectedUserId, users[i]));
     }
