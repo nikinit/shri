@@ -1,26 +1,3 @@
-.vote {
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.vote__title {
-    font-weight: bold;
-    font-size: 30px;
-    text-align: center;
-    color: #FCFBF7;
-    margin: 20px 0 0 0;
-}
-.vote__subtitle {
-    font-weight: 500;
-    font-size: 16px;
-    text-align: center;
-    color: #918F8A;
-    margin: 8px 0 0 0;
-}
 .vote__people {
     flex-grow: 1;
     margin: 5px 32px 5px 32px;
@@ -124,13 +101,6 @@
 }
 
 /* light theme */
-
-.theme_light .vote__title {
-    color: #261C00;
-}
-.theme_light .vote__subtitle {
-    color: #BFBFBF;
-}
 .theme_light .vote__people-user-avatar {
     -webkit-filter: grayscale(0);
     filter: grayscale(0);
@@ -195,16 +165,6 @@
         }
         .vote__people-user {
             height: 120px;
-        }
-    }
-    @media  screen and (max-width: 560px) {
-        .vote__title {
-            text-align: left;
-            margin-left: 24px;
-        }
-        .vote__subtitle {
-            align-self: flex-start;
-            margin-left: 24px;
         }
     }
 }

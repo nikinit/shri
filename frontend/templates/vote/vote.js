@@ -1,10 +1,8 @@
+import { renderHeader } from '../common/header';
 import './vote.css';
-import { orderUp } from './orderUp';
-import { orderDown } from './orderDown'; 
+
 const classes = {
     'root' : 'vote',
-    'title' : 'vote__title',
-    'subtitle' : 'vote__subtitle',
     'people' : 'vote__people',
     'peopleHorizontal' : 'vote__people_horizontal',
     'peopleVertical' : 'vote__people_vertical',
@@ -23,8 +21,6 @@ const classes = {
 }
 
 export function renderVoteTemplate(data) {
-    const title = data.title;
-    const subtitle = data.subtitle;
     const selectedUserId = data.selectedUserId;
     const buttonDarkDisabled = './images/button-hover-dark';
     const buttonDark = './images/button-dark';
@@ -34,6 +30,7 @@ export function renderVoteTemplate(data) {
     const usersLimitHorizontal = users.length - 6;
     const usersLimitVertical = users.length - 8;
     const userBoxes = [];
+    // TODO: MAX: render user from user.js
     let buttons = {}
     let order = 0; // default order is 0
     for (let i = 0; i < users.length; i++) {
@@ -49,9 +46,7 @@ export function renderVoteTemplate(data) {
     }
     const template = `
         <section class="${classes.root}">
-            <h1 class="${classes.title}">${title}</h1>
-            <h2 class="${classes.subtitle}">${subtitle}</h2>
-
+            ${renderHeader(data.title, data.subtitle)}
             <div class="${classes.people} ${classes.peopleHorizontal}">
 
                 <div class="${classes.peopleColumn}">
@@ -114,6 +109,7 @@ export function renderVoteTemplate(data) {
     `;
     return template;
 }
+
 // TODO: можно ли вместо написания функций в script написать их в отдельном файле, а потом перенести по ссылке?
 function createUserBox(selectedUserId, userData) {
     const userAvatar = userData.avatar;

@@ -1,27 +1,3 @@
-.diagram {
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.diagram__title {
-    font-weight: bold;
-    font-size: 30px;
-    text-align: center;
-    color: #FCFBF7;
-    margin: 0;
-    padding: 20px 0 0 0;
-}
-.diagram__subtitle {
-    font-weight: 500;
-    font-size: 16px;
-    text-align: center;
-    color: #918F8A;
-    margin: 8px 0 0 0;
-}
 .diagram__info {
     width: 100%;
     flex-grow: 1;
@@ -32,34 +8,17 @@
     margin: 29px auto 29px auto;
 }
 
-.diagram__info-visualization {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.diagram__info-visualization_ring {
-    stroke-dasharray: 1;
-    transform-origin: 50% 50%;
-}
-.diagram__info-visualization_total {
-    font-weight: bold;
-    font-size: 20px;
-    color: #FCFBF7;
-    margin: 0;
-}
-.diagram__info-visualization_difference {
-    margin: 6px 0 0 0;
-    font-weight: 500;
-    font-size: 16px;
-    color: #918F8A;
-}
 .diagram__info-detailed {
     display: flex;
     flex-direction: column;
+    flex: 1;
     width: calc(304vw / 668 * 100);
 }
+
+.diagram__chart {
+    flex: 1;
+}
+
 .diagram__info-detailed-string {
     display: flex;
     justify-content: space-between;
@@ -68,71 +27,61 @@
     margin-bottom: 0;
     margin-top: 16px;
 }
+
 .diagram__info-detailed-string:first-child {
     margin-top: 0;
 }
+
 .diagram__info-detailed-string:last-child{
     border-bottom: none;
     padding-bottom: 0;
     margin-bottom: 0;
 }
-.diagram__info-detailed-string-color-and-size {
+
+.diagram__string-color-and-size,
+.diagram__total-and-difference {
     display: flex;
 }
-.diagram__info-detailed-string-total-and-difference {
-    display: flex;
-}
-.diagram__info-detailed-string_color_s {
-    width: 16px;
-    height: 16px;
-    display: block;
-    background: radial-gradient(100% 100% at 50% 0%, rgba(62, 62, 62, 0.5) 0%, rgba(40, 40, 40, 0.5) 100%);
-    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    transform: matrix(1, 0, 0, -1, 0, 0);
-}
-.diagram__info-detailed-string_color_m {
-    width: 16px;
-    height: 16px;
-    display: block;
-    background: radial-gradient(100% 100% at 50% 0%, rgba(151, 151, 151, 0.5) 0%, rgba(41, 41, 41, 0.5) 100%);
-    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    transform: matrix(1, 0, 0, -1, 0, 0);
-}
-.diagram__info-detailed-string_color_l {
-    width: 16px;
-    height: 16px;
-    display: block;
-    background: radial-gradient(49.84% 49.84% at 49.84% 50.16%, rgba(99, 63, 0, 0.5) 72.92%, rgba(15, 9, 0, 0.5) 100%);
-    box-shadow: 0px 0px 20px -8px rgba(147, 93, 0, 0.2), inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(202, 129, 0, 0.9);
-    border-radius: 50%;
-    transform: matrix(1, 0, 0, -1, 0, 0);
-}
-.diagram__info-detailed-string_color_xl {
+
+.diagram__string-color {
     width: 16px;
     height: 16px;
     display: block;
     background: radial-gradient(49.84% 49.84% at 49.84% 50.16%, rgba(255, 163, 0, 0.8) 71.88%, rgba(91, 58, 0, 0.8) 100%);
     box-shadow: 0px 0px 20px -8px rgba(248, 158, 0, 0.2), inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(255, 162, 0, 0.9);
     border-radius: 50%;
-    transform: matrix(1, 0, 0, -1, 0, 0);
 }
-.diagram__info-detailed-string_size {
+
+.diagram__info-detailed-string:nth-child(2) .diagram__string-color {
+    background: radial-gradient(49.84% 49.84% at 49.84% 50.16%, rgba(99, 63, 0, 0.5) 72.92%, rgba(15, 9, 0, 0.5) 100%);
+    box-shadow: 0px 0px 20px -8px rgba(147, 93, 0, 0.2), inset -1px 1px 1px rgba(255, 255, 255, 0.5), inset 0px 0px 20px rgba(202, 129, 0, 0.9);
+}
+
+.diagram__info-detailed-string:nth-child(3) .diagram__string-color {
+    background: radial-gradient(100% 100% at 50% 0%, rgba(151, 151, 151, 0.5) 0%, rgba(41, 41, 41, 0.5) 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5);
+}
+.diagram__info-detailed-string:nth-child(4) .diagram__string-color {
+    background: radial-gradient(100% 100% at 50% 0%, rgba(62, 62, 62, 0.5) 0%, rgba(40, 40, 40, 0.5) 100%);
+    box-shadow: inset -1px 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+
+.diagram__string-size {
     font-weight: 500;
     font-size: 16px;
     color: #FCFBF7;
     margin: 0 0 0 10px;
 }
-.diagram__info-detailed-string_difference {
-    font-weight: 500;
-    font-size: 16px;
-    color: #918F8A;
-    margin: 0;
-}
-.diagram__info-detailed-string_total {
+
+.diagram__total,
+.diagram__difference {
     font-weight: 500;
     font-size: 16px;
     color: #918F8A;
     margin: 0 0 0 16px;
+}
+
+.diagram__difference {
+    margin: 0;
 }

@@ -14,14 +14,12 @@ const renderWrappedPage = (theme, alias, data) => {
         <title>ШРИ</title>
         <link rel="stylesheet" href="stories.css">
     </head>
-    <body> 
-        <body class="theme_${theme}">
-            <script type="text/javascript" src="stories.js"></script>
-            <script>
-                const body = document.querySelector('body');
-                body.innerHTML = window.renderTemplate('${alias}', ${JSON.stringify(data)})
-            </script>
-        </body>
+    <body class="theme_${theme}">
+        <script type="text/javascript" src="stories.js"></script>
+        <script>
+            const body = document.querySelector('body');
+            body.innerHTML = window.renderTemplate('${alias}', ${JSON.stringify(data)})
+        </script>
     </body>
   </html>
   `;

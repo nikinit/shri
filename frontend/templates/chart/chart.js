@@ -1,15 +1,15 @@
+import { renderHeader } from '../common/header';
 import './chart.css';
 
 const classes = {
     'root' : 'chart',
-    'title' : 'chart__title',
-    'subtitle' : 'chart__subtitle',
     'statistics' : 'chart__statistics',
     'bar' : 'chart__statistics-bar',
+    'barBest': 'chart__statistics-bar_best',
     'score' : 'chart__statistics-score',
     'scoreBest' : 'chart__statistics-score_best',
     'rectangle' : 'chart__statistics-rectangle',
-    'rectangleBest' : 'chart__statistics-rectangle_best',
+    'rectangleActive' : 'chart__statistics-rectangle_active',
     'sprintNumber' : 'chart__statistics-sprint-number',
     'users' : 'chart__users',
     'user' : 'chart__user',
@@ -20,93 +20,56 @@ const classes = {
 }
 
 export function renderChartTemplate(data) {
-    console.log(data);
     const title = data.title;
     const subtitle = data.subtitle;
     const users = data.users;
     const values = data.values;
-    const maxValue = findMaxValue(values);
-    let bars = [];
-    let userBoxes = [];
-    console.log(maxValue);
+    const maxValue = Math.max(...values.map(({value}) => value));
+
+    let barsMarkup = '';
+    let userBoxesMarkup = '';
+
     for(let i = 0; i < values.length; i++) {
-        bars.push(createBar(values[i], maxValue));
+        barsMarkup += createBar(values[i], maxValue);
     }
     for(let i = 0; i < users.length; i++) {
-        userBoxes.push(createUserBox(users[i]));
+        userBoxesMarkup += createUserBox(users[i]);
     }
-    const template = `
+
+    return `
         <section class="${classes.root}">
-        <h1 class="${classes.title}">${title}</h1>
-        <h2 class="${classes.subtitle}">${subtitle}</h2>
-        <div class="${classes.statistics}">
-            ${bars[0]}
-            ${bars[1]}
-            ${bars[2]}
-            ${bars[3]}
-
-            ${bars[4]}
-            ${bars[5]}
-            ${bars[6]}
-            ${bars[7]}
-            ${bars[8]}
-            ${bars[9]}
-            ${bars[10]}
-            ${bars[11]}
-            ${bars[12]}
-
-            ${bars[13]}
-            ${bars[14]}
-            ${bars[15]}
-
-        </div>
-
-        <div class="${classes.users}">
-            ${userBoxes[0]}
-            ${userBoxes[1]}
-
-            ${userBoxes[2]}
-        </div>
-    </section>
+            ${renderHeader(title, subtitle)}
+            <div class="${classes.statistics}">${barsMarkup}</div>
+            <div class="${classes.users}">${userBoxesMarkup}</div>
+        </section>
     `;
-    console.log(window.document.body);
-    return template;
 }
+
 function createBar(bar, maxValue) {
-    const sprintNumber = bar.title;
-    const score = bar.value;
-    const active = bar.active;
-    const barTemplate = `
-        <div class="${classes.bar}">
-            <h3 class="${classes.score} ${score === maxValue ? classes.scoreBest : ''}">${score === 0 ? '' : score}</h3>
-            <div class="${classes.rectangle} ${active === true ? classes.rectangleBest : ''}" style="height: ${score / maxValue * 70}%" ></div>
-            <h4 class="${classes.sprintNumber}">${sprintNumber}</h4>
+    const isBestBar = bar.value === maxValue;
+    
+    return `
+        <div class="${classes.bar} ${isBestBar ? classes.barBest : ''}">
+            <h3 class="${classes.score} ${isBestBar ? classes.scoreBest : ''}">${bar.value === 0 ? '' : bar.value}</h3>
+            <div
+                class="${classes.rectangle} ${bar.active === true ? classes.rectangleActive : ''}"
+                style="height: ${bar.value / maxValue * 70}%">
+            </div>
+            <h4 class="${classes.sprintNumber}">${bar.title}</h4>
         </div>
     `;
-    // style="height: calc(${score === maxValue ? '100' : score / maxValue * 70}%)"
-    return barTemplate;
 }
+
 function createUserBox(userData) {
-    const userName = userData.name;
-    const userAvatar = userData.avatar;
-    const userValue = userData.valueText;
-    const imagePath = `./images/4x/${userAvatar}`;
-    const userBox = `
+    const imagePath = `./images/4x/${userData.avatar}`;
+    
+    return `
         <div class="${classes.user}">
             <img class="${classes.userAvatar}" src='${imagePath}' alt='avatar'>
             <div class="${classes.userInfo}">
-                <h3 class="${classes.userName}">${userName}</h3>
-                <h4 class="${classes.userScore}">${userValue}</h4>
+                <h3 class="${classes.userName}">${userData.name}</h3>
+                <h4 class="${classes.userScore}">${userData.valueText}</h4>
             </div>
         </div>
     `;
-    return userBox;
-}
-function findMaxValue(values) {
-    for(let i = 0; i < values.length; i++) {
-        if (values[i].active === true) {
-            return values[i].value;
-        }
-    }
-    return 0;
 }

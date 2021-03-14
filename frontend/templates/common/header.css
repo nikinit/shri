@@ -1,0 +1,35 @@
+.header {
+    margin: 0 24px;
+    text-align: center;
+}
+
+.header__title {
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 32px;
+    color: #FCFBF7;
+    margin: 20px 0 0 0;
+}
+.header__subtitle {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    color: #918F8A;
+    margin: 8px 0 0 0;
+}
+
+/* light theme below */
+.theme_light .header__title {
+    color: #261C00;
+}
+.theme_light .header__subtitle {
+    color: #BFBFBF;
+}
+
+/* adaptive below */
+@media screen and (orientation: portrait) {
+    .header {
+        align-self: flex-start;
+        text-align: left;
+    }
+}

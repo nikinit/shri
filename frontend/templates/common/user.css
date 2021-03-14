@@ -1,0 +1,64 @@
+.user {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 104px;
+    height: calc(142vh / 376 * 100);
+    border-radius: 6px;
+    max-height: 142px;
+}
+
+.user__emoji {
+    font-size: 32px;
+    line-height: 32px;
+    position: absolute;
+    top: -16px;
+    z-index: 10;
+}
+
+.user__image {
+    width: 64px;
+    height: 64px;
+    filter: grayscale(100%);
+    border-radius: 50%;
+}
+
+.user__title {
+    font-size: 16px;
+    line-height: 18px;
+    color: #FCFBF7;
+    margin: 6px 0 0 0;
+    max-width: 100px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.user__subtitle {
+    font-size: 14px;
+    line-height: 16px;
+    color: #BFBFBF;
+    margin: 4px 0 0 0;
+    text-align: center;
+}
+
+/* light theme */
+.theme_light .user__title {
+    -webkit-filter: grayscale(0);
+    filter: grayscale(0);
+}
+
+.theme_light .user__name {
+    color: #261C00;
+}
+
+.theme_light .user__subtitle {
+    color: #BFBFBF;
+}
+
+@media screen and (max-width : 376px) { /* TODO MAX: probably worth removing */
+    .leaders__user-box {
+        max-width: 120px;
+    }
+}

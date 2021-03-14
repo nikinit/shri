@@ -2,151 +2,127 @@
 /******/ 	"use strict";
 var __webpack_exports__ = {};
 
+;// CONCATENATED MODULE: ./frontend/helpers/pyramidSort.js
+function pyramidSort(arr, compareFn) {
+    const sorted = [...arr].sort(compareFn);
+    const pyramidSorted = new Array(arr.length)
+
+    for (let i = 0; i < sorted.length; i++) {
+        const originalIndex = sorted.length / i > 2 ? i * 2 : (sorted.length - i) * 2 - 1;
+        pyramidSorted[i] = sorted[originalIndex]
+    }
+
+    return pyramidSorted;
+}
+
+;// CONCATENATED MODULE: ./frontend/templates/common/header.js
+
+
+function renderHeader(title, subtitle) {
+    return `
+        <header class="header">
+            <h1 class="header__title">${title}</h1>
+            <h2 class="header__subtitle">${subtitle}</h2>
+        </header>
+    `
+}
+
+;// CONCATENATED MODULE: ./frontend/templates/common/user.js
+
+
+function renderUser(userData = {}, options = {}) {
+    const { isHorizontal, size, emoji, isSelected, isHoverable, mixCls = '' } = options; // TODO: use this variables
+    const { name = '', valueText } = userData; 
+    const imagePath = `./images/4x/${userData.avatar}`;
+
+    return `
+        <div class='user ${mixCls}'>
+            ${emoji ? `<div class='user__emoji'>${emoji}</div>` : ''}
+            <img class='user__image' src='${imagePath}' alt='${userData.name}'>
+            <h3 class='user__title'>${name}</h3>
+            ${valueText ? `<h4 class='user__subtitle'>${valueText}</h4>` : ''}
+        </div>
+    `;
+}
+
 ;// CONCATENATED MODULE: ./frontend/templates/leaders/leaders.js
 
 
-const classes = {
-    'root' : 'leaders',
-    'title' : 'leaders__title',
-    'subtitle' : 'leaders__subtitle',
-    'usersBox' : 'leaders__users-box',
-    'userBox' : 'leaders__user-box',
-    'info' : 'leaders__user-box-info',
-    'emoji' : 'leaders__user-box-info_emoji',
-    'image' : 'leaders__user-box-info_image',
-    'name' : 'leaders__user-box-info_name',
-    'value' : 'leaders__user-box-info_value',
-    'rectangle' : 'leaders__user-box-rectangle',
-    'rectangleFirst' : 'leaders__user-box-rectangle_first',
-    'place' : 'leaders__user-box-place'
-};
+
+
 
 function renderLeadersTemplate(data) {
-    const title = data.title;
-    const subtitle = data.subtitle;
-    const users = data.users;
-    const winnerEmoji = data.emoji;
-    const lastPlaceEmoji = '👍';
-    const isFirst = 0;
-    const isLast = 4;
-    let userBoxes = [];
-    for(let i = 0; i < users.length; i++) {
-        if(i === isFirst) {
-            userBoxes.push(createUserBox(users[i], i, winnerEmoji));
-        }
-        else if(i === isLast) {
-            userBoxes.push(createUserBox(users[i], i, lastPlaceEmoji));
-        }
-        else {
-            userBoxes.push(createUserBox(users[i], i));
-        }
+    const { users, emoji } = data;
+    const sortedUsers = pyramidSort(users, (u1, u2) => u1.valueText - u2.valueText)
+    let participants = '';
+    for(let i = 0; i < sortedUsers.length; i++) {
+        participants += renderParticipant(sortedUsers, i, emoji)
     }
     
-    const template = `
-        <section class='${classes.root}'>
-            <h1 class='${classes.title}'>${title} </h1>
-            <h2 class='${classes.subtitle}'>${subtitle}</h2>
-            <div class='${classes.usersBox}'>
-                ${userBoxes[0]}
-                ${userBoxes[1]}
-                ${userBoxes[2]}
-                ${userBoxes[3]}
-                ${userBoxes[4]}
-            </div>
+    return `
+        <section class='leaders'>
+            ${renderHeader(data.title, data.subtitle)}
+            <div class='leaders__participants'>${participants}</div>
         </section>
     `;
-
-    return template;
 }
 
-function createUserBox(userData, userPlace, emoji = '') {
-    const userName = userData.name;
-    const userAvatar = userData.avatar;
-    const userValue = userData.valueText;
-    const imagePath = `./images/4x/${userAvatar}`;
-    const userBox = `
-        <div class='${classes.userBox}'>
-            <div class='${classes.info}'>
-                <div class='${classes.emoji}'>${emoji}</div>
-                <img class='${classes.image}' src='${imagePath}' alt='user avatar'>
-                <h3 class='${classes.name}'>${userName}</h3>
-                <h4 class='${classes.value}'>${userValue}</h4>
-            </div>
-            <div class='${classes.rectangle} ${userPlace === 0 ? classes.rectangleFirst : ''}'>
-                <h5 class='${classes.place}'>${userPlace + 1}</h5>
+function renderParticipant(users, userIndex, winnerEmoji) {
+    const userData = users[userIndex];
+    const isLeader = parseInt(userData.valueText, 10) === Math.max(...users.map(({valueText}) => parseInt(valueText, 10)));
+    const distanceFromLeader = Math.abs(Math.floor(users.length / 2) - userIndex);
+    const position = Math.floor(users.length / 2) - userIndex >= 0 ? 'left' : 'right';
+    const styles = `
+        ${position}: ${16 * distanceFromLeader}px;
+        z-index: ${Math.floor(users.length / 2) - distanceFromLeader}
+    `
+
+    return `
+        <div
+            class='leaders__participant ${isLeader ? '' : `leaders__participant_${position}`}'
+            style="${styles}"
+        >
+            ${renderUser(userData, { emoji: isLeader ? winnerEmoji : undefined, mixCls: 'leaders__participant-user' })}
+            <div class='leaders__participant-rectangle ${isLeader ? 'leaders__participant-rectangle_first' : ''}'>
+                <h5 class='leaders__participant-place'>${distanceFromLeader * 2 + (position === 'left' ? 1 : 0)}</h5>
             </div>
         </div>
     `;
+}
 
-    return userBox;
+;// CONCATENATED MODULE: ./frontend/templates/diagram/pieChart.js
+
+
+function renderChart(spec) {
+    return `
+    <div class="pieContainer">
+        <div class="pieBackground"></div>
+        <div id="pieSlice1" class="hold"><div class="pie"></div></div>
+        <div id="pieSlice2" class="hold"><div class="pie"></div></div>
+        <div id="pieSlice3" class="hold"><div class="pie"></div></div>
+        <div id="pieSlice4" class="hold"><div class="pie"></div></div>
+        <div id="pieSlice5" class="hold"><div class="pie"></div></div>
+        <div id="pieSlice6" class="hold"><div class="pie"></div></div>
+        <div class="innerCircle"><div class="content"><b>Data</b><br>from 16<sup>th</sup> April, 2014</div></div>
+    </div>
+    `
 }
 
 ;// CONCATENATED MODULE: ./frontend/templates/diagram/diagram.js
 
 
+
+
 function renderDiagramTemplate(data, theme) {
-    const classes = {
-        
-    }
-    const title = data.title;
-    const subtitle = data.subtitle;
     const totalText = data.totalText;
     const differenceText = data.differenceText;
-    const categories = data.categories;
     const template = `
-    <section class="root">
-        <h1 class="diagram__title">Размер коммитов</h1>
-        <h2 class="diagram__subtitle">Спринт №213</h2>
-        <div class="diagram__info"> <!--two columns or rows, depends on width-->
-            <div class="diagram__info-visualization"> <!--diagram-->
-                            
-            </div>
+    <section class="diagram">
+        ${renderHeader(data.title, data.subtitle)}
+        <div class="diagram__info">
+            ${renderChart()}
             <div class="diagram__info-detailed">
-
-                <div class="diagram__info-detailed-string">
-                    <div class="diagram__info-detailed-string-color-and-size"> <!--color and string-->
-                        <div class="diagram__info-detailed-string_color_xl"></div>
-                        <h3 class="diagram__info-detailed-string_size">> 1001 строки</h3>
-                    </div>
-                    <div class="diagram__info-detailed-string-total-and-difference"> <!--total and difference-->
-                        <h3 class="diagram__info-detailed-string_difference">+8</h3>
-                        <h4 class="diagram__info-detailed-string_total">30</h4>
-                    </div>
-                </div>
-
-                <div class="diagram__info-detailed-string">
-                    <div class="diagram__info-detailed-string-color-and-size"> <!--color and string-->
-                        <div class="diagram__info-detailed-string_color_l"></div>
-                        <h3 class="diagram__info-detailed-string_size">501 — 1000 строк</h3>
-                    </div>
-                    <div class="diagram__info-detailed-string-total-and-difference"> <!--total and difference-->
-                        <h3 class="diagram__info-detailed-string_difference">+6</h3>
-                        <h4 class="diagram__info-detailed-string_total">32</h4>
-                    </div>
-                </div>
-
-                <div class="diagram__info-detailed-string">
-                    <div class="diagram__info-detailed-string-color-and-size"> <!--color and string-->
-                        <div class="diagram__info-detailed-string_color_m"></div>
-                        <h3 class="diagram__info-detailed-string_size">101 — 500 строк</h3>
-                    </div>
-                    <div class="diagram__info-detailed-string-total-and-difference"> <!--total and difference-->
-                        <h3 class="diagram__info-detailed-string_difference">+16</h3>
-                        <h4 class="diagram__info-detailed-string_total">58</h4>
-                    </div>
-                </div>
-
-                <div class="diagram__info-detailed-string">
-                    <div class="diagram__info-detailed-string-color-and-size"> <!--color and string-->
-                        <div class="diagram__info-detailed-string_color_s"></div>
-                        <h3 class="diagram__info-detailed-string_size">1 — 100 строк</h3>
-                    </div>
-                    <div class="diagram__info-detailed-string-total-and-difference"> <!--total and difference-->
-                        <h3 class="diagram__info-detailed-string_difference">+12</h3>
-                        <h4 class="diagram__info-detailed-string_total">62</h4>
-                    </div>
-                </div>
-
+                ${renderTable(data.categories)}
             </div>
         </div>
     </section>
@@ -154,19 +130,37 @@ function renderDiagramTemplate(data, theme) {
     return template;
 }
 
+function renderTable(categories) {
+    return categories.reduce((prev, cur) => {
+        prev += `
+        <div class="diagram__info-detailed-string">
+            <div class="diagram__string-color-and-size">
+                <div class="diagram__string-color"></div>
+                <h3 class="diagram__string-size">${cur.title}</h3>
+            </div>
+            <div class="diagram__total-and-difference">
+                <h3 class="diagram__difference">+${parseInt(cur.differenceText, 10)}</h3>
+                <h4 class="diagram__total">${parseInt(cur.valueText, 10)}</h4>
+            </div>
+        </div>
+        `
+        return prev;
+    }, '')
+}
+
 ;// CONCATENATED MODULE: ./frontend/templates/chart/chart.js
 
 
-const chart_classes = {
+
+const classes = {
     'root' : 'chart',
-    'title' : 'chart__title',
-    'subtitle' : 'chart__subtitle',
     'statistics' : 'chart__statistics',
     'bar' : 'chart__statistics-bar',
+    'barBest': 'chart__statistics-bar_best',
     'score' : 'chart__statistics-score',
     'scoreBest' : 'chart__statistics-score_best',
     'rectangle' : 'chart__statistics-rectangle',
-    'rectangleBest' : 'chart__statistics-rectangle_best',
+    'rectangleActive' : 'chart__statistics-rectangle_active',
     'sprintNumber' : 'chart__statistics-sprint-number',
     'users' : 'chart__users',
     'user' : 'chart__user',
@@ -177,104 +171,66 @@ const chart_classes = {
 }
 
 function renderChartTemplate(data) {
-    console.log(data);
     const title = data.title;
     const subtitle = data.subtitle;
     const users = data.users;
     const values = data.values;
-    const maxValue = findMaxValue(values);
-    let bars = [];
-    let userBoxes = [];
-    console.log(maxValue);
+    const maxValue = Math.max(...values.map(({value}) => value));
+
+    let barsMarkup = '';
+    let userBoxesMarkup = '';
+
     for(let i = 0; i < values.length; i++) {
-        bars.push(createBar(values[i], maxValue));
+        barsMarkup += createBar(values[i], maxValue);
     }
     for(let i = 0; i < users.length; i++) {
-        userBoxes.push(chart_createUserBox(users[i]));
+        userBoxesMarkup += createUserBox(users[i]);
     }
-    const template = `
-        <section class="${chart_classes.root}">
-        <h1 class="${chart_classes.title}">${title}</h1>
-        <h2 class="${chart_classes.subtitle}">${subtitle}</h2>
-        <div class="${chart_classes.statistics}">
-            ${bars[0]}
-            ${bars[1]}
-            ${bars[2]}
-            ${bars[3]}
 
-            ${bars[4]}
-            ${bars[5]}
-            ${bars[6]}
-            ${bars[7]}
-            ${bars[8]}
-            ${bars[9]}
-            ${bars[10]}
-            ${bars[11]}
-            ${bars[12]}
-
-            ${bars[13]}
-            ${bars[14]}
-            ${bars[15]}
-
-        </div>
-
-        <div class="${chart_classes.users}">
-            ${userBoxes[0]}
-            ${userBoxes[1]}
-
-            ${userBoxes[2]}
-        </div>
-    </section>
+    return `
+        <section class="${classes.root}">
+            ${renderHeader(title, subtitle)}
+            <div class="${classes.statistics}">${barsMarkup}</div>
+            <div class="${classes.users}">${userBoxesMarkup}</div>
+        </section>
     `;
-    console.log(window.document.body);
-    return template;
 }
+
 function createBar(bar, maxValue) {
-    const sprintNumber = bar.title;
-    const score = bar.value;
-    const active = bar.active;
-    const barTemplate = `
-        <div class="${chart_classes.bar}">
-            <h3 class="${chart_classes.score} ${score === maxValue ? chart_classes.scoreBest : ''}">${score === 0 ? '' : score}</h3>
-            <div class="${chart_classes.rectangle} ${active === true ? chart_classes.rectangleBest : ''}" style="height: ${score / maxValue * 70}%" ></div>
-            <h4 class="${chart_classes.sprintNumber}">${sprintNumber}</h4>
+    const isBestBar = bar.value === maxValue;
+    
+    return `
+        <div class="${classes.bar} ${isBestBar ? classes.barBest : ''}">
+            <h3 class="${classes.score} ${isBestBar ? classes.scoreBest : ''}">${bar.value === 0 ? '' : bar.value}</h3>
+            <div
+                class="${classes.rectangle} ${bar.active === true ? classes.rectangleActive : ''}"
+                style="height: ${bar.value / maxValue * 70}%">
+            </div>
+            <h4 class="${classes.sprintNumber}">${bar.title}</h4>
         </div>
     `;
-    // style="height: calc(${score === maxValue ? '100' : score / maxValue * 70}%)"
-    return barTemplate;
 }
-function chart_createUserBox(userData) {
-    const userName = userData.name;
-    const userAvatar = userData.avatar;
-    const userValue = userData.valueText;
-    const imagePath = `./images/4x/${userAvatar}`;
-    const userBox = `
-        <div class="${chart_classes.user}">
-            <img class="${chart_classes.userAvatar}" src='${imagePath}' alt='avatar'>
-            <div class="${chart_classes.userInfo}">
-                <h3 class="${chart_classes.userName}">${userName}</h3>
-                <h4 class="${chart_classes.userScore}">${userValue}</h4>
+
+function createUserBox(userData) {
+    const imagePath = `./images/4x/${userData.avatar}`;
+    
+    return `
+        <div class="${classes.user}">
+            <img class="${classes.userAvatar}" src='${imagePath}' alt='avatar'>
+            <div class="${classes.userInfo}">
+                <h3 class="${classes.userName}">${userData.name}</h3>
+                <h4 class="${classes.userScore}">${userData.valueText}</h4>
             </div>
         </div>
     `;
-    return userBox;
 }
-function findMaxValue(values) {
-    for(let i = 0; i < values.length; i++) {
-        if (values[i].active === true) {
-            return values[i].value;
-        }
-    }
-    return 0;
-}
+
 ;// CONCATENATED MODULE: ./frontend/templates/vote/vote.js
 
 
- 
+
 const vote_classes = {
     'root' : 'vote',
-    'title' : 'vote__title',
-    'subtitle' : 'vote__subtitle',
     'people' : 'vote__people',
     'peopleHorizontal' : 'vote__people_horizontal',
     'peopleVertical' : 'vote__people_vertical',
@@ -293,8 +249,6 @@ const vote_classes = {
 }
 
 function renderVoteTemplate(data) {
-    const title = data.title;
-    const subtitle = data.subtitle;
     const selectedUserId = data.selectedUserId;
     const buttonDarkDisabled = './images/button-hover-dark';
     const buttonDark = './images/button-dark';
@@ -304,6 +258,7 @@ function renderVoteTemplate(data) {
     const usersLimitHorizontal = users.length - 6;
     const usersLimitVertical = users.length - 8;
     const userBoxes = [];
+    // TODO: MAX: render user from user.js
     let buttons = {}
     let order = 0; // default order is 0
     for (let i = 0; i < users.length; i++) {
@@ -319,9 +274,7 @@ function renderVoteTemplate(data) {
     }
     const template = `
         <section class="${vote_classes.root}">
-            <h1 class="${vote_classes.title}">${title}</h1>
-            <h2 class="${vote_classes.subtitle}">${subtitle}</h2>
-
+            ${renderHeader(data.title, data.subtitle)}
             <div class="${vote_classes.people} ${vote_classes.peopleHorizontal}">
 
                 <div class="${vote_classes.peopleColumn}">
@@ -384,6 +337,7 @@ function renderVoteTemplate(data) {
     `;
     return template;
 }
+
 // TODO: можно ли вместо написания функций в script написать их в отдельном файле, а потом перенести по ссылке?
 function vote_createUserBox(selectedUserId, userData) {
     const userAvatar = userData.avatar;
